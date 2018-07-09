@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="en">
+<head>   
+  <!-- <meta charset="utf-8"/>    -->
+  <meta charset="utf-8" http-equiv="refresh" content="1"/>   
+  <title>Application count people in room </title>      <!-- import plugin script -->   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+</head>
+<body>
+<style>
+.container {
+   width: 100%;
+   
+}
+
+#chart {
+   /*width: 40%;  three containers (use 25% for four, and 50% for two, etc) */
+   height: 300px;
+   margin-right: 5%;
+   margin-left: 5%;
+   margin-bottom: 5%;
+   background: #e8e8e8;
+   float: left;
+   /*padding: 10px;*/
+}
+
+#chartold {
+ /*width: 40%;  three containers (use 25% for four, and 50% for two, etc) */
+ height: 300px;
+ margin-right: 5%;
+ margin-right: 5%;
+ background: #e8e8e8;
+ margin-bottom: 5%;
+ float: right;
+}
+
+#pieunknown {
+  width: 50%;  
+  float: left;
+  /*height: 40%;*/
+  /*background: #e8e8e8;*/
+  /*margin-bottom: */
+  /*position: bottom;*/
+}
+
+div {
+    /*color: red;*/
+    text-transform: uppercase;
+}
+
+h1 {
+    /*color: blue;*/
+    text-transform: uppercase;
+}
+
+label {
+    /*color: red;*/
+    text-transform: uppercase;
+}
+
+</style>
+<h1>Application count people in room
+</h1><!-- bar chart canvas element -->
+<div id="content" class="container" style="width:100%;">
+  <div id="left" style="float:left; width:50%;">
+    <label>
+      Gender of people in room
+      <div id="id_chart"><canvas id="chart"></canvas></div>
+    </label>
+  </div>
+  <div id="right" style="float:right; width:50%;">
+    <label>
+      Age of peope in room
+      <div id="id_chartodl"><canvas id="chartold"></canvas></div> 
+    </label>
+  </div>
+    
+ </div>    
+    <label>
+      Age of unknown people in room
+      <div id="id_pieunknown"><canvas id="pieunknown"></canvas>  
+    </label>
+ <script>
+   // bar chart data
+   var barData = {
+   labels : [{% for item in labels %}
+                  "{{item}}",
+              {% endfor %}],
+   datasets : [
+      {
+            fillColor: "rgba(153,102,255,0.2)",
+            strokeColor: "rgba(153,102,255,1)",
+            pointColor: "rgba(153,102,255,1)",
+         data : [{% for item in values %}
+                      {{item}},
+                    {% endfor %}]
+      }
+      ]
+   }
+ 
+   // get bar chart canvas
+   var mychart = document.getElementById("chart").getContext("2d");
+   // mychart.style.left = "0px";
+   // mychart.style.top = "100px";
+   steps = 10
+   max = 10
+   // draw bar chart
+   new Chart(mychart).Bar(barData, {
+        scaleOverride: true,
+        scaleSteps: steps,
+        scaleStepWidth: Math.ceil(max / steps),
+        scaleStartValue: 0,
+        scaleShowVerticalLines: true,
+        scaleShowGridLines : true,
+        barShowStroke : true,
+        scaleShowLabels: true,
+        animation: false
+   });
+
+
+   var barDataOld = {
+      labels : [{% for item in old_labels %}
+                    "{{item}}",
+                {% endfor %}],
+      datasets : [
+        {
+              fillColor: "rgba(255, 102, 102,0.2)",
+              strokeColor: "rgba(255, 102, 102,1)",
+              pointColor: "rgba(255, 102, 102,1)",
+           data : [{% for item in old_values %}
+                        {{item}},
+                      {% endfor %}]
+        }
+        ]
+      }
+
+      // get bar chart canvas
+      var mychart1 = document.getElementById("chartold").getContext("2d");
+      // mychart1.style.left = "600x";
+      // mychart1.style.top = "100px";
+      steps = 10
+      max = 10
+      // draw bar chart
+      new Chart(mychart1).Bar(barDataOld, {
+          scaleOverride: true,
+          scaleSteps: steps,
+          scaleStepWidth: Math.ceil(max / steps),
+          scaleStartValue: 0,
+          scaleShowVerticalLines: true,
+          scaleShowGridLines : true,
+          barShowStroke : true,
+          scaleShowLabels: true,
+          animation: false
+      });
+
+      var pieData = [
+        {% for item, label, colors in set %}
+          {
+            value: {{item}},
+            label: "{{label}}",
+            color: "{{colors}}"
+          },
+        {% endfor %}
+      ];
+
+      var mypie = document.getElementById("pieunknown").getContext("2d");
+      steps = 10
+      max = {{ max }}
+
+      new Chart(document.getElementById("pieunknown").getContext("2d")).Pie(pieData, {
+        animation: false,
+        title: {
+            display: true,
+            text: 'Custom Chart Title'
+        }
+      })
+</script>
+
+</body></html>

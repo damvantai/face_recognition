@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8" http-equiv="refresh" content="3"/>   
+	<title>Bar Chart</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+	<script src="http://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+	<script src="http://www.chartjs.org/samples/latest/utils.js"></script>
+<style type="text/css">
+.container {
+   width: 100%;
+   
+}
+
+#canvas {
+	/*width: 45%;*/
+	height: 80%;
+	float: right;
+	/*margin-left: 5%;*/
+	margin-top: 25%;
+	margin-bottom: 5%;
+}
+
+#canvas1 {
+	height: 80%;
+	float: left;
+	/*margin-right: 5%;*/
+	margin-top: 25%;
+	margin-bottom: 5%;
+}
+
+#chart-area {
+	float: top;
+	/*margin-bottom: 5%;*/
+	/*margin-top: 2%;*/
+}
+
+</style></head>
+
+<body>
+	
+	<div style="width: 40%; height: 100px; margin: auto;">
+			<canvas id="chart-area"></canvas>
+	</div>
+
+	<div id="container" style="width: 100%;">
+		<div id="left" style="float:left; width:50%;">
+		      	<canvas id="canvas"></canvas>
+		</div>
+		<div id="right" style="float:right; width:50%;">
+		      	<canvas id="canvas1"></canvas>
+		</div>
+	</div>
+	<script>
+		var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var color = Chart.helpers.color;
+		var barChartData = {
+			labels: ['0-20', '20-30', '30-40', '40-50', '50-'],
+			datasets: [{
+				label: 'Male',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				borderWidth: 1,
+				data: [
+					{% for item in num_people[1] %}
+                        {{item}},
+                      {% endfor %}
+				]
+			}, 
+			{
+				label: 'Female',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
+				borderWidth: 1,
+				data: [
+					{% for item in num_people[0] %}
+                        {{item}},
+                      {% endfor %}
+				]
+			}]
+
+		};
+
+
+		var barChartData1 = {
+			labels: ['0-20', '20-30', '30-40', '40-50', '50-'],
+			datasets: [{
+				label: 'Male',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				borderWidth: 1,
+				data: [
+					{% for item in num_people_unknown[1] %}
+                        {{item}},
+                      {% endfor %}
+				]
+			}, 	
+			{
+				label: 'Female',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
+				borderWidth: 1,
+				data: [
+					{% for item in num_people_unknown[0] %}
+                        {{item}},
+                      {% endfor %}
+
+				]
+			}]
+
+		};
+
+
+
+		var mypie = {
+			labels: [
+					
+					'Male',
+					'Female',
+				],
+			datasets: [{
+					data: [
+						{{total_male_in_room}},
+						{{total_female_in_room}},
+					],
+					backgroundColor: [	
+						window.chartColors.blue,
+						window.chartColors.red,	
+					],
+					label: 'Dataset 1'
+			}]
+		};
+
+		var ctx = document.getElementById('canvas').getContext('2d');
+		var steps = 10
+   		var max = 10
+		new Chart(ctx, {
+			type: 'bar',
+			data: barChartData,
+			options: {
+				animation: false,
+				responsive: true,
+				legend: {
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'ALL PEOPLE IN ROOM'
+				},
+				scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function (value) { if (Number.isInteger(value)) { return value; } },
+                        stepSize: 1
+                    }
+                }]
+            }
+			}
+		})
+
+		var ctx1 = document.getElementById('canvas1').getContext('2d');
+		var steps = 10
+   		var max = 10
+		new Chart(ctx1, {
+			type: 'bar',
+			data: barChartData1,
+			options: {
+
+				animation: false,
+				responsive: true,
+				legend: {
+					position: 'top',
+				},
+				title: {
+					display: true,
+					text: 'PEOPLE UNKNOWN IN ROOM'
+				},
+				scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function (value) { if (Number.isInteger(value)) { return value; } },
+                        stepSize: 1
+                    }
+                }]
+            }
+			}
+		})
+
+		var ctx2 = document.getElementById('chart-area').getContext('2d');
+
+		new Chart(ctx2, {
+			type: 'pie',
+			data: mypie,
+			options: {
+				animation: false,
+				responsive: true,
+				title: {
+						display: true,
+						text: 'ALL PEOPLE IN ROOM (Male/Female)'
+					}
+			}
+		})
+
+	</script>
+</body></html>
